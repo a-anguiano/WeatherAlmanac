@@ -29,6 +29,18 @@ namespace WeatherAlmanac.BLL
 
         public Result<DateRecord> Edit(DateRecord record)
         {
+            //DateRecord dr = new DateRecord();
+            ////// todo: pass through to IRecordRepository
+            //dr.HighTemp = record.HighTemp;
+            //dr.LowTemp = record.LowTemp;
+            //dr.Humidity = record.Humidity;
+            //dr.Description = record.Description;
+
+            Result<DateRecord> result = _repo.Edit(record);
+            return result;
+
+            // todo: pass through to IRecordRepository, this should only not be successful if the date doesn't exist
+            // which should have been caught when retrieving the record to edit.
             throw new NotImplementedException();
         }
 
@@ -39,18 +51,18 @@ namespace WeatherAlmanac.BLL
 
             Result<DateRecord> result = new Result<DateRecord>();   //generating empty result variable of type
                                                                     //Result<DateRecord>
-            foreach (DateRecord d in allDates)                      //looking through all date records 
-            {                
-                if (d.Date == date)  //user input
+
+            for (int i = 0; i < allDates.Count; i++)    //validation within the service
+            {
+
+                if (allDates[i].Date == date)
                 {
                     result.Success = true;
-                    result.Message = "";
-                    result.Data = d;                    //wow
-                }                                  
+                    result.Message = "";        //stringbuilder
+                    result.Data = allDates[i];  
+                }
             }
             return result;
-
-            //UI depends on BLL
             //throw new NotImplementedException();
         }
 
@@ -64,14 +76,14 @@ namespace WeatherAlmanac.BLL
             //dictionary, keys are ticks, older has less ticks
             if (start.Ticks < end.Ticks)
             {
-            //look at later
+            //look at later!!!!!
             }
 
             // todo: filter records from repository get all based on date range           
             List<DateRecord> allDates = _repo.GetAll().Data;
             List<DateRecord> orderedRange = allDates.OrderBy(d => d.Date).ToList(); //hmmm <=
 
-            foreach (DateRecord d in allDates)
+            foreach (DateRecord d in orderedRange)
             {
                 if (d.Date >= start && d.Date <= end)
                 {
@@ -91,7 +103,10 @@ namespace WeatherAlmanac.BLL
 
         public Result<DateRecord> Remove(DateTime date)
         {
-            throw new NotImplementedException();
+            // todo: pass through to IRecordRepository
+            Result<DateRecord> result = _repo.Remove(date);
+            return result;
+            //throw new NotImplementedException();
         }
     }
 

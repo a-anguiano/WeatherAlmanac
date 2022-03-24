@@ -35,9 +35,25 @@ namespace WeatherAlmanac.DAL
             //throw new NotImplementedException();
         }
 
-        public Result<DateRecord> Edit(DateRecord record)
+        public Result<DateRecord> Edit(DateRecord record)       //here the record is already "updated"
         {
-            throw new NotImplementedException();
+            //Replace DateRecord property
+
+            //if null, leave it old; replace otherwise with new            
+            Result<DateRecord> result = new Result<DateRecord>();
+            result.Data = record;
+            result.Message = "";
+            result.Success = true;
+
+            for (int i = 0; i < _records.Count; i++)
+            {
+                if (_records[i].Date == record.Date)
+                {
+                    _records[i] = record;
+                }
+            }
+            return result;
+            //throw new NotImplementedException();
         }
 
         public Result<List<DateRecord>> GetAll()
@@ -51,7 +67,20 @@ namespace WeatherAlmanac.DAL
 
         public Result<DateRecord> Remove(DateTime date)
         {
-            throw new NotImplementedException();
-        }
+            Result<DateRecord> result = new Result<DateRecord>();
+                        
+            for (int i = 0; i < _records.Count; i++)
+            {
+                if (_records[i].Date == date)
+                {                    
+                    result.Data = _records[i];         
+                    result.Message = "";
+                    result.Success = true;              //technically only part "you need"
+                    _records.Remove(_records[i]);
+                }
+            }
+            return result;
+        } 
+            //throw new NotImplementedException();
     }
 }

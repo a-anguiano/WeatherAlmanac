@@ -99,11 +99,12 @@ namespace WeatherAlmanac.UI
         public void LoadRecord()
         {
             _ui.Display("Load Record");
+
+            //check if user input is able to be parsed into DateTime
+
             DateTime date = DateTime.Parse(_ui.PromptUser("Enter a date: "));
             Result<DateRecord> result = Service.Get(date);
             _ui.Display(result.Data.ToString());
-
-            //get from BLL
         }
 
         public void ViewRecordsByDateRange()
@@ -125,7 +126,8 @@ namespace WeatherAlmanac.UI
             DateTime date = DateTime.Parse(_ui.PromptUser("What's the date?"));
             int highTemp = _ui.GetInt("What's the High Temp?");
             int lowTemp = _ui.GetInt("What's the Low Temp?");
-            int humid = _ui.GetInt("What's the Humidity?");     //change from int to dec
+            decimal humid = _ui.GetDecimal("What's the Humidity?");     //change from int to dec
+            
             string description = _ui.PromptUser("What's the Description?");
 
             DateRecord dr = new DateRecord();   //huh
@@ -141,11 +143,39 @@ namespace WeatherAlmanac.UI
         public void EditRecord()
         {
             _ui.Display("Edit Record");
+            DateTime date = DateTime.Parse(_ui.PromptUser("What's the date you wish to edit?"));
+
+            Result<DateRecord> result = Service.Get(date);
+
+            //_ui.Display(result.Data.ToString());
+
+
+            decimal highTempChange = _ui.GetDecimal($"High ({result.Data.HighTemp}) : ");            //display old info
+            decimal lowTempChange = _ui.GetDecimal($"Low ({result.Data.LowTemp}) : ");
+            decimal humidChange = _ui.GetDecimal($"Humidity ({result.Data.Humidity}) : ");     
+
+            string descriptionChange = _ui.PromptUser($"Description ({result.Data.Description}) : ");
+
+            DateRecord dr = new DateRecord();   //new empty date record type to send to service
+            dr.Date = date;
+            dr.HighTemp = highTempChange;
+            dr.LowTemp = lowTempChange;
+            dr.Humidity = humidChange / 100;
+            dr.Description = descriptionChange;
+            Result<DateRecord> newResult = Service.Edit(dr);
+            //_ui.Display(newResult.Data.ToString());                 //just to test
         }
 
         public void DeleteRecord()
         {
             _ui.Display("Delete Record");
+            DateTime date = DateTime.Parse(_ui.PromptUser("Enter a date to remove: "));
+            Result<DateRecord> result = Service.Get(date);
+            _ui.Display(result.Data.ToString());
+
+            Result<DateRecord> result2 = Service.Remove(date);
+
+            //_ui.Display(result2.Data.ToString()); //hmmm
         }
     }
 }
